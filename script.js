@@ -1,17 +1,33 @@
 function sendMessage() {
     const wordInput = document.getElementById("wordInput");
-    const userText = wordInput.value.trim();
+    const userText = wordInput.value.trim().toLowerCase();
 
     if (userText) {
         displayMessage(userText, "user");
 
-        translateToEnglish(userText)
-            .then(translatedText => {
-                fetchDefinition(translatedText);
-            })
-            .catch(error => {
-                displayMessage("Désolé, une erreur s'est produite avec la traduction.", "bot");
-            });
+        const predefinedResponses = {
+            "bonjour": "Bonjour, que puis-je pour vous ?",
+            "bonsoir": "Bonsoir, que puis-je pour vous ?",
+            "salut": "Salut, que puis-je pour vous ?",
+            "norbert": "MANPKLIN NORBERT, professeur certifié à l'UTT Loko, mathématicien chercheur.",
+            "manpklin": "MANPKLIN NORBERT, professeur certifié à l'UTT Loko, mathématicien chercheur.",
+            "djinan": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
+            "étudiant le plus brillant de l'utt loko": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
+            "géreur de marasse": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
+            "mathieu": "ANDRIN MATHIEU étudiant le plus brillant de Loko, encore connu sous le nom de Géreur de marasse.",
+        };
+
+        if (predefinedResponses[userText]) {
+            displayMessage(predefinedResponses[userText], "bot");
+        } else {
+            translateToEnglish(userText)
+                .then(translatedText => {
+                    fetchDefinition(translatedText);
+                })
+                .catch(error => {
+                    displayMessage("Désolé, une erreur s'est produite avec la traduction.", "bot");
+                });
+        }
 
         wordInput.value = '';
     }
