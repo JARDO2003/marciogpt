@@ -1,6 +1,6 @@
 function sendMessage() {
     const wordInput = document.getElementById("wordInput");
-    const userText = wordInput.value.trim().toLowerCase();
+    let userText = wordInput.value.trim().toLowerCase();
 
     if (userText) {
         displayMessage(userText, "user");
@@ -20,17 +20,30 @@ function sendMessage() {
         if (predefinedResponses[userText]) {
             displayMessage(predefinedResponses[userText], "bot");
         } else {
-            translateToEnglish(userText)
-                .then(translatedText => {
-                    fetchDefinition(translatedText);
-                })
-                .catch(error => {
-                    displayMessage("Désolé, une erreur s'est produite avec la traduction.", "bot");
+            const words = extractWords(userText);
+            if (words.length > 0) {
+                words.forEach(word => {
+                    translateToEnglish(word)
+                        .then(translatedText => {
+                            fetchDefinition(translatedText);
+                        })
+                        .catch(error => {
+                            displayMessage(`Désolé, une erreur s'est produite avec la traduction de "${word}".`, "bot");
+                        });
                 });
+            } else {
+                displayMessage("Désolé, je n'ai pas compris votre demande.", "bot");
+            }
         }
 
         wordInput.value = '';
     }
+}
+
+function extractWords(text) {
+    // Supprime la ponctuation et divise la phrase par "et" ou ","
+    const words = text.replace(/[.,!?;:]/g, "").split(/\set\s|,/);
+    return words.map(word => word.trim()).filter(word => word.length > 0);
 }
 
 function translateToEnglish(text) {
@@ -60,6 +73,7 @@ function fetchDefinition(word) {
             const audio = wordData.phonetics[0]?.audio || '';
 
             const botResponse = `
+                <b>${word}</b> :<br>
                 Définition : <br>${definition}<br><br>
                 Phonétique : ${phonetic}<br>
                 ${audio ? `<audio controls><source src="${audio}" type="audio/mp3"></audio>` : ''}
