@@ -20,17 +20,15 @@ function sendMessage() {
         if (predefinedResponses[userText]) {
             displayMessage(predefinedResponses[userText], "bot");
         } else {
-            const words = extractWords(userText);
-            if (words.length > 0) {
-                words.forEach(word => {
-                    translateToEnglish(word)
-                        .then(translatedText => {
-                            fetchDefinition(translatedText);
-                        })
-                        .catch(error => {
-                            displayMessage(`Désolé, une erreur s'est produite avec la traduction de "${word}".`, "bot");
-                        });
-                });
+            const lastWord = extractLastWord(userText);
+            if (lastWord) {
+                translateToEnglish(lastWord)
+                    .then(translatedText => {
+                        fetchDefinition(translatedText);
+                    })
+                    .catch(error => {
+                        displayMessage("Désolé, une erreur s'est produite avec la traduction.", "bot");
+                    });
             } else {
                 displayMessage("Désolé, je n'ai pas compris votre demande.", "bot");
             }
@@ -40,10 +38,10 @@ function sendMessage() {
     }
 }
 
-function extractWords(text) {
-    // Supprime la ponctuation et divise la phrase par "et" ou ","
-    const words = text.replace(/[.,!?;:]/g, "").split(/\set\s|,/);
-    return words.map(word => word.trim()).filter(word => word.length > 0);
+function extractLastWord(text) {
+    // Supprime la ponctuation à la fin de la phrase et divise en mots
+    const words = text.replace(/[.,!?;:]/g, "").split(/\s+/);
+    return words.length > 0 ? words[words.length - 1] : "";
 }
 
 function translateToEnglish(text) {
@@ -73,7 +71,6 @@ function fetchDefinition(word) {
             const audio = wordData.phonetics[0]?.audio || '';
 
             const botResponse = `
-                <b>${word}</b> :<br>
                 Définition : <br>${definition}<br><br>
                 Phonétique : ${phonetic}<br>
                 ${audio ? `<audio controls><source src="${audio}" type="audio/mp3"></audio>` : ''}
