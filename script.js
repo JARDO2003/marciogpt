@@ -84,7 +84,7 @@ function fetchDefinition(word) {
             translateBotResponseToFrench(botResponse);
         })
         .catch(error => {
-            displayMessage(`Désolé, je n'ai pas trouvé le mot "${word}". Veuillez réessayer.`, "bot");
+            displayMessage(`Oups la version 1.0 de MARCIO JARDEL voudrais que vous poser une question précis, exemple: MARCIO-GPT donne moi la définition du mot chat "${word}". Veuillez réessayer.`, "bot");
         });
 }
 
