@@ -15,11 +15,11 @@ function sendMessage() {
             "étudiant le plus brillant de l'utt loko": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
             "géreur de marasse": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
             "mathieu": "ANDRIN MATHIEU étudiant le plus brillant de Loko, encore connu sous le nom de Géreur de marasse.",
-            "issouf": "Msr TRAORE ISSOUF connu sous le nom de DJINAN représente un modèle brillant pour l'utt loko."
-            "cheick": "Msr TRAORE CHEICK encore connu sous le nom du djassaman est un homme d'affaire, étudiant au groupe loko."
-        "marcio": "Msr ZINZINDOHOUE MARCIO JARDEL propriétaire et créateur de MARCIO-GPT IA, passionner dans le domaine du codage il est aussi l'un des étudiant du groupe loko."
-        "cissé": "CISSE TINTO est l'une des plus meilleure étudiante du groupe loko, un des modèles les plus rare ."
-        "awa": "AWA TRAORE est l'une des meilleures étudiante du groupe loko, belle rayonnante et un visage toujours souriante ."
+            "issouf": "Msr TRAORE ISSOUF connu sous le nom de DJINAN représente un modèle brillant pour l'utt loko.",
+            "cheick": "Msr TRAORE CHEICK encore connu sous le nom du djassaman est un homme d'affaire, étudiant au groupe loko.",
+        "marcio": "Msr ZINZINDOHOUE MARCIO JARDEL propriétaire et créateur de MARCIO-GPT IA, passionner dans le domaine du codage il est aussi l'un des étudiant du groupe loko.",
+        "cissé": "CISSE TINTO est l'une des plus meilleure étudiante du groupe loko, un des modèles les plus rare .",
+        "awa": "AWA TRAORE est l'une des meilleures étudiante du groupe loko, belle rayonnante et un visage toujours souriante .",
         };
 
         if (predefinedResponses[userText]) {
