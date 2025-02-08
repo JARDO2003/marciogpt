@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo en Dessin</title>
+    <style>
+        body { 
+            text-align: center; 
+            font-family: Arial, sans-serif; 
+            background: url('image/WhatsApp\ Image\ 2025-02-02\ à\ 03.07.02_01806dba.jpg') no-repeat center center fixed; 
+            background-size: cover;
+            margin: 0; 
+            padding: 0; 
+        }
+        .container { max-width: 90%; margin: auto; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; }
+        canvas { border: 1px solid black; margin-top: 20px; display: block; max-width: 100%; height: auto; }
+        button, input, select { margin-top: 10px; padding: 10px; font-size: 16px; cursor: pointer; border: none; background: #007BFF; color: white; border-radius: 5px; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Convertir une photo en dessin</h2>
+        <input type="file" id="upload" accept="image/*">
+        <button id="takePhoto">Prendre un selfie</button>
+        <label for="level">Niveau :</label>
+        <select id="level"></select>
+        <canvas id="canvas"></canvas>
+        <button id="next">Suivant</button>
+        <video id="video" style="display: none;"></video>
+    </div>
+    
+    <script>
+        const upload = document.getElementById('upload');
+        const levelSelect = document.getElementById('level');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const nextButton = document.getElementById('next');
+        const takePhotoButton = document.getElementById('takePhoto');
+        const video = document.getElementById('video');
+
+        for (let i = 1; i <= 20; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Niveau ${i}`;
+            levelSelect.appendChild(option);
+        }
+        
+        upload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = () => {
+                canvas.width = img.width / 2;
+                canvas.height = img.height / 2;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                applySketchEffect(parseInt(levelSelect.value));
+            };
+        });
+        
+        takePhotoButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = "block";
+                video.play();
+                
+                setTimeout(() => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    stream.getTracks().forEach(track => track.stop());
+                    video.style.display = "none";
+                    applySketchEffect(parseInt(levelSelect.value));
+                }, 3000);
+            } catch (error) {
+                alert("Impossible d'accéder à la caméra");
+            }
+        });
+        
+        levelSelect.addEventListener('change', () => {
+            if (canvas.width > 0) {
+                applySketchEffect(parseInt(levelSelect.value));
+            }
+        });
+        
+        function applySketchEffect(level) {
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                let gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
+                let contrast = 1 + level * 0.05;
+                gray = Math.min(255, Math.max(0, contrast * (gray - 128) + 128));
+                data[i] = data[i + 1] = data[i + 2] = gray;
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+            detectEdges(imageData, level);
+        }
+        
+        function detectEdges(imageData, level) {
+            let data = imageData.data;
+            let width = imageData.width;
+            let height = imageData.height;
+            let edgeData = new Uint8ClampedArray(data.length);
+            let threshold = 10 + level * 4;
+            let detailFactor = Math.max(1, level);
+            
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    let i = (y * width + x) * 4;
+                    let gx = -data[i - 4] + data[i + 4];
+                    let gy = -data[i - width * 4] + data[i + width * 4];
+                    let edge = Math.sqrt(gx * gx + gy * gy);
+                    edgeData[i] = edgeData[i + 1] = edgeData[i + 2] = edge > threshold ? 0 : 255;
+                    edgeData[i + 3] = 255;
+                }
+            }
+            
+            let edgeImage = new ImageData(edgeData, width, height);
+            ctx.putImageData(edgeImage, 0, 0);
+        }
+        
+        nextButton.addEventListener('click', () => {
+            let imgData = canvas.toDataURL();
+            localStorage.setItem('sketchImage', imgData);
+            window.location.href = 'decoration.html';
+        });
+    </script>
+</body>
+</html>
+
