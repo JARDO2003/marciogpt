@@ -13,7 +13,7 @@ function sendMessage() {
             "manpklin": "MANPKLIN NORBERT, professeur certifié à l'UTT Loko, mathématicien chercheur.",
             "djinan": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
             "étudiant le plus brillant de l'utt loko": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
-            "géreur de marasse": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
+            "marcel": "KOMBETO MARCEL, ancien élève de ESPOIR PLUS?, apès le bac décide de poursuivre ses études dans le domaine de l'aeronomique.",
             "mathieu": "ANDRIN MATHIEU étudiant le plus brillant de Loko, encore connu sous le nom de Géreur de marasse.",
             "issouf": "Msr TRAORE ISSOUF connu sous le nom de DJINAN représente un modèle brillant pour l'utt loko.",
             "cheick": "Msr TRAORE CHEICK encore connu sous le nom du djassaman est un homme d'affaire, étudiant au groupe loko.",
