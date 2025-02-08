@@ -145,3 +145,34 @@
 
 
 MARCIO.J: BIENVENUE DANS MON DICTIONNAIRE, POSER TOUTES VOS QUESTIONS.....
+
+<button id="goToDrawing">J'ai envie de faire ton portrait 😊</button>
+
+<style>
+    #goToDrawing {
+        display: block;
+        margin: 20px auto;
+        padding: 15px 30px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(45deg, #007BFF, #0056b3);
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #goToDrawing:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<script>
+    document.getElementById("goToDrawing").addEventListener("click", function() {
+        window.location.href = "dessin.html";
+    });
+</script>
+
