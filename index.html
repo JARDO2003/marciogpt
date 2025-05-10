@@ -1,178 +1,542 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MARCIO-GPT 1.5</title>
     <style>
+        :root {
+            --primary-color: #1e88e5;
+            --secondary-color: #0d47a1;
+            --accent-color: #4caf50;
+            --text-color: #f5f5f5;
+            --dark-bg: rgba(10, 10, 30, 0.8);
+            --message-user: #1565c0;
+            --message-bot: #212121;
+            --correction-color: #ff9800;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #0a234f;
             margin: 0;
-            padding: 20px;
-            background-image: url('image/WhatsApp\ Image\ 2025-02-02\ à\ 03.07.02_01806dba.jpg'); /* Remplace 'ton_image.jpg' par le chemin vers ton image */
+            padding: 0;
+            background-image: url('image/download.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: white;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         #logo {
-            text-align: center;
-            font-size: 48px;
-            font-weight: bold;
-            color: #fff;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-color);
             letter-spacing: 3px;
             text-transform: uppercase;
-            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7); /* Ombre portée pour le texte */
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(90deg, #1e88e5, #5e35b1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            }
+            to {
+                transform: scale(1.03);
+                text-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #bbdefb;
+            font-weight: 300;
             margin-bottom: 20px;
         }
 
         #chatBox {
-            max-width: 100%;
-            margin: 0 auto;
-            background-color: rgba(3, 6, 44, 0.5);
+            flex: 1;
+            background-color: var(--dark-bg);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            height: 500px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             overflow-y: auto;
             margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.1);
         }
 
-        .message {
-            padding: 10px 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            max-width: 80%;
+        #chatBox::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .user-message {
-            background-color: #0c77f1;
-            align-self: flex-end;
+        #chatBox::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
-        .bot-message {
-            background-color: #000000;
-            align-self: flex-start;
-        }
-
-        #wordInput {
-            width: 75%;
-            padding: 10px;
-            border-radius: 25px;
-            border: 1px solid #191313;
-            margin-right: 10px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        #sendBtn {
-            padding: 10px 15px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 25px;
-            cursor: pointer;
-        }
-
-        #sendBtn:hover {
-            background-color: #45a049;
-        }
-
-        #wordInput:focus {
-            outline: none;
+        #chatBox::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
         }
 
         .message-container {
             display: flex;
             flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: var(--border-radius);
+            max-width: 80%;
+            line-height: 1.5;
+            font-size: 1rem;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, var(--message-user), #2979ff);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background: linear-gradient(135deg, var(--message-bot), #424242);
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #wordInput {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 30px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        #wordInput:focus {
+            outline: none;
+            box-shadow: 0 2px 15px rgba(30, 136, 229, 0.4);
+            background-color: #fff;
+        }
+
+        #wordInput::placeholder {
+            color: #666;
+        }
+
+        #sendBtn {
+            padding: 12px 24px;
+            border: none;
+            background: linear-gradient(135deg, var(--accent-color), #2e7d32);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        #sendBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+        }
+
+        #sendBtn:active {
+            transform: translateY(1px);
+        }
+
+        #goToDrawing {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #ff4081, #c2185b);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 64, 129, 0.3);
+            transition: var(--transition);
+        }
+
+        #goToDrawing:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.5);
+        }
+
+        #goToDrawing:active {
+            transform: translateY(1px);
+        }
+
+        audio {
+            margin-top: 10px;
+            border-radius: 30px;
+            width: 100%;
+        }
+
+        b {
+            color: #90caf9;
         }
 
         /* Media queries for responsiveness */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
+            .container {
+                width: 95%;
+                padding: 20px 0;
+            }
+
+            #logo {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
             }
 
             #chatBox {
-                height: 400px;
-                padding: 15px;
+                height: 60vh;
             }
 
             #wordInput {
-                width: 70%;
+                padding: 12px 16px;
             }
 
             #sendBtn {
-                width: 25%;
+                padding: 12px 20px;
             }
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 5px;
+            .container {
+                width: 100%;
+                padding: 15px;
             }
 
-            #chatBox {
-                height: 350px;
-                padding: 10px;
+            #logo {
+                font-size: 2rem;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 12px 16px;
             }
 
             #wordInput {
-                width: 60%;
+                padding: 10px 14px;
             }
 
             #sendBtn {
-                width: 35%;
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            #goToDrawing {
+                padding: 12px 24px;
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div id="logo">MARCIO-GPT 1.5</div>
-    <div id="chatBox" class="message-container">
-        <!-- Chat messages will appear here -->
-    </div>
-    <div>
-        <input type="text" id="wordInput" placeholder="Enter a word" />
-        <button id="sendBtn" onclick="sendMessage()">Send</button>
+    <div class="container">
+        <div class="app-header">
+            <div id="logo">DUBONHEUR-ART </div>
+            <div class="subtitle">Votre assistant IA personnel, un dictionnaire artificielle concu pour vos recherche personnel</div>
+        </div>
+        
+        <div id="chatBox" class="message-container">
+            <!-- Les messages du chat apparaîtront ici -->
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="wordInput" placeholder="Posez votre question..." />
+            <button id="sendBtn">Envoyer</button>
+        </div>
+        
+        <button id="goToDrawing">J'ai envie de faire ton portrait 😊</button>
     </div>
     
-    <script src="script.js"></script>
+    <script>
+        // Afficher un message de bienvenue au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            displayMessage("BIENVENUE DANS MON DICTIONNAIRE, ENTREZ LE MOTS QUE VOUS VOUDRIEZ RECHERCHEZ, EXEMPLE CHAT.....", "bot");
+        });
+        
+        function sendMessage() {
+            const wordInput = document.getElementById("wordInput");
+            let userText = wordInput.value.trim().toLowerCase();
+
+            if (userText) {
+                displayMessage(userText, "user");
+
+                const predefinedResponses = {
+                    "bonjour": "Bonjour, que puis-je pour vous ?",
+                    "bonsoir": "Bonsoir, que puis-je pour vous ?",
+                    "salut": "Salut, que puis-je pour vous ?",
+                    "norbert": "MANPKLIN NORBERT, professeur certifié à l'UTT Loko, mathématicien chercheur.",
+                    "manpklin": "MANPKLIN NORBERT, professeur certifié à l'UTT Loko, mathématicien chercheur.",
+                    "djinan": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
+                    "étudiant le plus brillant de l'utt loko": "OBOU Claude Cyrille, étudiant le plus brillant de Loko.",
+                    "marcel": "KOMBETO MARCEL, ancien élève de ESPOIR PLUS?, après le bac décide de poursuivre ses études dans le domaine de l'aéronomique.",
+                    "mathieu": "ANDRIN MATHIEU étudiant le plus brillant de Loko, encore connu sous le nom de Géreur de marasse.",
+                    "issouf": "Msr TRAORE ISSOUF connu sous le nom de DJINAN représente un modèle brillant pour l'utt loko.",
+                    "cheick": "Msr TRAORE CHEICK encore connu sous le nom du djassaman est un homme d'affaire, étudiant au groupe loko.",
+                    "marcio": "Msr ZINZINDOHOUE MARCIO JARDEL propriétaire et créateur de MARCIO-GPT IA, passionner dans le domaine du codage il est aussi l'un des étudiant du groupe loko.",
+                    "cissé": "CISSE TINTO est l'une des plus meilleure étudiante du groupe loko, un des modèles les plus rare.",
+                    "awa": "AWA TRAORE est l'une des meilleures étudiante du groupe loko, belle rayonnante et un visage toujours souriante."
+                };
+
+                if (predefinedResponses[userText]) {
+                    displayMessage(predefinedResponses[userText], "bot");
+                } else {
+                    const lastWord = extractLastWord(userText);
+                    if (lastWord) {
+                        // Vérifier l'orthographe avant d'envoyer
+                        checkSpelling(lastWord)
+                            .then(correctedWord => {
+                                if (correctedWord !== lastWord) {
+                                    displayMessage(`J'ai corrigé "${lastWord}" en "${correctedWord}"`, "bot", true);
+                                }
+                                return translateToEnglish(correctedWord);
+                            })
+                            .then(translatedText => {
+                                fetchDefinition(translatedText);
+                            })
+                            .catch(error => {
+                                console.error("Erreur:", error);
+                                displayMessage("Désolé, une erreur s'est produite avec la traduction.", "bot");
+                            });
+                    } else {
+                        displayMessage("Désolé, je n'ai pas compris votre demande.", "bot");
+                    }
+                }
+
+                wordInput.value = '';
+            }
+        }
+
+        function extractLastWord(text) {
+            // Supprime la ponctuation à la fin de la phrase et divise en mots
+            const words = text.replace(/[.,!?;:]/g, "").split(/\s+/);
+            return words.length > 0 ? words[words.length - 1] : "";
+        }
+
+        // Fonction pour vérifier l'orthographe d'un mot
+        function checkSpelling(word) {
+            // Dictionnaire de mots français courants avec leurs corrections
+            const commonMisspellings = {
+                "bonjoru": "bonjour",
+                "salu": "salut",
+                "merci": "merci",
+                "cha": "chat",
+                "chein": "chien",
+                "chie": "chien",
+                "chiien": "chien",
+                "maisson": "maison",
+                "mesion": "maison",
+                "arbre": "arbre",
+                "arbr": "arbre",
+                "voitur": "voiture",
+                "vwatur": "voiture",
+                "aple": "apple",
+                "bomjour": "bonjour",
+                "ordi": "ordinateur",
+                "ordenateur": "ordinateur",
+                "fleure": "fleur",
+                "fleu": "fleur",
+                "flur": "fleur",
+                "eco": "école",
+                "ecole": "école",
+                "garscon": "garçon",
+                "garcon": "garçon",
+                "tabble": "table",
+                "tabl": "table",
+                "stilo": "stylo",
+                "styl": "stylo",
+                "fille": "fille",
+                "fillle": "fille",
+                "fil": "fille",
+                "eglize": "église",
+                "eglis": "église",
+                "livr": "livre",
+                "livvre": "livre",
+                "feille": "feuille",
+                "feuill": "feuille",
+                "feuil": "feuille",
+                "lumièr": "lumière",
+                "lumier": "lumière",
+                // Ajoutez autant de mots que vous le souhaitez
+            };
+            
+            // Si le mot est dans notre dictionnaire de corrections, on le corrige
+            if (commonMisspellings[word.toLowerCase()]) {
+                return Promise.resolve(commonMisspellings[word.toLowerCase()]);
+            }
+            
+            // Pour une vérification plus avancée, on pourrait utiliser une API
+            // Mais pour l'instant, on peut utiliser une approche basique basée sur un dictionnaire de référence
+            return Promise.resolve(word); // Retourne le mot original si aucune correction n'est trouvée
+        }
+
+        function translateToEnglish(text) {
+            return fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=en&dt=t&q=${encodeURIComponent(text)}`)
+                .then(response => response.json())
+                .then(data => data[0].map(item => item[0]).join(' '))
+                .catch(error => {
+                    console.error('Erreur de traduction :', error);
+                    throw error;
+                });
+        }
+
+        function fetchDefinition(word) {
+            fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Mot non trouvé');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const wordData = data[0];
+                    const definition = wordData.meanings.map(meaning => 
+                        meaning.definitions.map(def => `<b>${def.definition}</b>`).join('<br>')
+                    ).join('<br><br>');
+                    const phonetic = wordData.phonetic || 'Non disponible';
+                    const audio = wordData.phonetics[0]?.audio || '';
+
+                    const botResponse = `
+                        Définition : <br>${definition}<br><br>
+                        Phonétique : ${phonetic}<br>
+                        ${audio ? `<audio controls><source src="${audio}" type="audio/mp3"></audio>` : ''}
+                    `;
+
+                    translateBotResponseToFrench(botResponse);
+                })
+                .catch(error => {
+                    displayMessage(`Oups la version 1.5 de MARCIO-GPT voudrait que vous posiez une question précise, exemple: "MARCIO-GPT donne moi la définition du mot chat". Veuillez réessayer.`, "bot");
+                });
+        }
+
+        function translateBotResponseToFrench(text) {
+            fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fr&dt=t&q=${encodeURIComponent(text)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const translatedText = data[0].map(item => item[0]).join(' ');
+                    displayMessage(translatedText, "bot");
+                })
+                .catch(error => {
+                    console.error('Erreur de traduction :', error);
+                    displayMessage("Désolé, une erreur s'est produite avec la traduction.", "bot");
+                });
+        }
+
+        function displayMessage(message, sender, isCorrection = false) {
+            const chatBox = document.getElementById("chatBox");
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message", `${sender}-message`);
+            
+            // Si c'est un message de correction, ajouter une classe spéciale
+            if (isCorrection && sender === "bot") {
+                messageElement.style.background = "linear-gradient(135deg, var(--correction-color), #e65100)";
+            }
+            
+            // Ajouter une en-tête au message
+            const senderLabel = sender === "user" ? "Vous" : "MARCIO-GPT";
+            const headerElement = document.createElement("div");
+            headerElement.classList.add("message-header");
+            headerElement.textContent = senderLabel;
+            messageElement.appendChild(headerElement);
+            
+            const contentElement = document.createElement("div");
+            contentElement.innerHTML = message;
+            messageElement.appendChild(contentElement);
+            
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        document.getElementById("wordInput").addEventListener("keypress", function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        document.getElementById("sendBtn").addEventListener("click", function() {
+            sendMessage();
+        });
+
+        document.getElementById("goToDrawing").addEventListener("click", function() {
+            window.location.href = "dessin.html";
+        });
+    </script>
 </body>
 </html>
-
-
-MARCIO.J: BIENVENUE DANS MON DICTIONNAIRE, POSER TOUTES VOS QUESTIONS.....
-
-<button id="goToDrawing">J'ai envie de faire ton portrait 😊</button>
-
-<style>
-    #goToDrawing {
-        display: block;
-        margin: 20px auto;
-        padding: 15px 30px;
-        font-size: 18px;
-        font-weight: bold;
-        color: white;
-        background: linear-gradient(45deg, #007BFF, #0056b3);
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    #goToDrawing:hover {
-        transform: scale(1.05);
-        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
-    }
-</style>
-
-<script>
-    document.getElementById("goToDrawing").addEventListener("click", function() {
-        window.location.href = "dessin.html";
-    });
-</script>
-
